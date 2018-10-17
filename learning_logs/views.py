@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import Topic, Entry, User
-from .forms import TopicForm, EntryForm
+from .models import Topic, Entry, User, Message
+from .forms import TopicForm, EntryForm, MessageForm
 
 
 # Create your views here.
@@ -26,11 +26,21 @@ def account(request):
 
 def accounts(request, account_id):
 	"""show list topic"""
-	topic = Topic.objects.first()
-	user = User.objects.filter(id=account_id)
-	entries = Entry.objects.filter(owner=user) 
-	context = {'topics': topic, 'entries': entries, 'the_user': user}
+	# Если это личный кабинет текущего пользователя - перейти в его кабинет
+	if int(account_id) == int(request.user.id)	:
+		return HttpResponseRedirect( reverse('learning_logs:account') )
+		
+	topic = Topic.objects.first()	
+	the_user = User.objects.get(id=account_id)
+	entries = Entry.objects.filter(owner=the_user) 
+	context = {'topics': topic, 'entries': entries, 'the_user': the_user}
 	return render(request, 'learning_logs/accounts.html', context)
+
+def messages(request):
+	"""show list messages"""
+	my_messages = Message.objects.filter(address_id=request.user.id)
+	context = {'messages': my_messages}
+	return render(request, 'learning_logs/messages.html', context) 
 
 def topics(request):
 	"""show list topic"""
@@ -53,6 +63,24 @@ def product(request, product_id):
 	obj_product = Entry.objects.get(id=product_id)
 	context = {'product': obj_product}
 	return render(request, 'learning_logs/product.html', context)
+
+@login_required
+def send_message(request, address_id):
+	""" Отправляет сообщение пользователю """
+	if request.method != 'POST':
+		# Data not send, create empty form
+		form = MessageForm()
+	else:
+		#Data send; tread data
+		form = MessageForm(request.POST)
+		if form.is_valid():
+			new_message = form.save(commit=False)
+			new_message.address_id = address_id
+			new_message.sender = request.user
+			new_message.save()
+			return HttpResponseRedirect( reverse('learning_logs:account'))
+	context = {'form': form, 'address': address_id}
+	return render(request, 'learning_logs/send_message.html', context)
 
 @login_required
 def new_topic(request):

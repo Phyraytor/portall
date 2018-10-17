@@ -1,0 +1,25 @@
+{% extends 'learning_logs/base.html' %}
+{% block header %}
+  <h2>{{ topic }}</h2>
+{% endblock header %}
+{% block content %}
+<h4> Личный кабинет {{ user.username }} </h1>
+
+{% for message in messages %}
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <h3>
+           <a href = "/account/{{ message.sender.id}}">{{ message.sender.username }}</a>
+        </h3>
+      </div>
+      <div class="panel-body">
+      	<h5> Тема: {{ message.title }} </h5>
+        {{ message.text|linebreaks }}
+      </div>
+
+    </div> <!-- panel -->
+{% empty %}
+    Сообщений нет
+{% endfor %}
+{% endblock content %}

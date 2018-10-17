@@ -29,9 +29,9 @@ class Entry(models.Model):
 		else: 
 			return self.text[:50] + "..."
 
-'''class message(models.Model):
+class Message(models.Model):
 	text = models.TextField()
 	sender = models.ForeignKey(User)
-	addressee = models.ForeignKey(User)
+	address_id  = models.BigIntegerField()
 	title = models.CharField(max_length=200)
-	data_added = models.DateTimeField(auto_now_add=True)'''
+	data_added = models.DateTimeField(auto_now_add=True)

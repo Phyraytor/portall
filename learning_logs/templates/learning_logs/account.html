@@ -7,6 +7,9 @@
 <p>
   <a href="{% url 'learning_logs:new_entry' %}">Добавить товар</a>
 </p>
+<p>
+  <a href="{% url 'learning_logs:messages' %}"> Мои сообщения</a>
+</p>
 {% for entry in entries %}
     <div class="panel panel-default">
       <div class="panel-heading">
