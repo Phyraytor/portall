@@ -5,8 +5,8 @@ from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 
-from .models import Topic, Entry, User, Message
-from .forms import TopicForm, EntryForm, MessageForm
+from .models import Topic, Entry, User, Message, CommentProduct
+from .forms import TopicForm, EntryForm, MessageForm, CommentProductForm
 
 
 # Create your views here.
@@ -29,7 +29,6 @@ def accounts(request, account_id):
 	# Если это личный кабинет текущего пользователя - перейти в его кабинет
 	if int(account_id) == int(request.user.id)	:
 		return HttpResponseRedirect( reverse('learning_logs:account') )
-		
 	topic = Topic.objects.first()	
 	the_user = User.objects.get(id=account_id)
 	entries = Entry.objects.filter(owner=the_user) 
@@ -61,7 +60,8 @@ def topic(request, topic_id):
 def product(request, product_id):
 	"""show this product and his text"""
 	obj_product = Entry.objects.get(id=product_id)
-	context = {'product': obj_product}
+	comments = CommentProduct.objects.filter(product=obj_product)
+	context = {'product': obj_product, 'comments': comments}
 	return render(request, 'learning_logs/product.html', context)
 
 @login_required
@@ -81,6 +81,25 @@ def send_message(request, address_id):
 			return HttpResponseRedirect( reverse('learning_logs:account'))
 	context = {'form': form, 'address': address_id}
 	return render(request, 'learning_logs/send_message.html', context)
+
+@login_required
+def comment_product(request, product_id):
+	""" Оставить комментарий под товаром """
+	if request.method != 'POST':
+		# Data not send, create empty form
+		form = CommentProductForm()
+	else:
+		#Data send; tread data
+		form = CommentProductForm(request.POST)
+		if form.is_valid():
+			new_comment = form.save(commit=False)
+			new_comment.product = Entry.objects.get(id=product_id)
+			new_comment.commenter = request.user
+			new_comment.save()
+			return HttpResponseRedirect( reverse('learning_logs:topics'))
+	context = {'form': form, 'product': product_id}
+	return render(request, 'learning_logs/comment_product.html', context)
+
 
 @login_required
 def new_topic(request):

@@ -35,3 +35,8 @@ class Message(models.Model):
 	address_id  = models.BigIntegerField()
 	title = models.CharField(max_length=200)
 	data_added = models.DateTimeField(auto_now_add=True)
+
+class CommentProduct(models.Model):
+	text = models.TextField()
+	commenter = models.ForeignKey(User)
+	product = models.ForeignKey(Entry)

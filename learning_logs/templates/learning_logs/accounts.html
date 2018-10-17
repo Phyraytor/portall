@@ -6,8 +6,7 @@
 
 <h4> Личный кабинет {{ the_user.username }} </h1>
 <a href = "/account/send_message/{{ the_user.id}}"> Отправить сообщение</a>
-{{ result1 }} <br>
-{{ result2 }}
+
 {% for entry in entries %}
     <div class="panel panel-default">
       <div class="panel-heading">

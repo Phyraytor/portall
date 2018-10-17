@@ -1,5 +1,5 @@
 from django import forms
-from .models import Topic, Entry, Message
+from .models import Topic, Entry, Message, CommentProduct
 
 class TopicForm(forms.ModelForm):
 	class Meta:
@@ -24,4 +24,10 @@ class MessageForm(forms.ModelForm):
 	class Meta:
 		model = Message
 		fields = ['title', 'text']
+		labels = {'text': ''}
+
+class CommentProductForm(forms.ModelForm):
+	class Meta:
+		model = CommentProduct
+		fields = ['text']
 		labels = {'text': ''}

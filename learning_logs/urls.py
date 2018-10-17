@@ -19,6 +19,9 @@ urlpatterns = [
 		views.edit_entry, name='edit_entry'),
 	# page product
 	url(r'^product/(?P<product_id>\d+)/$', views.product, name='product'),
+
+	# add comment product
+	url(r'^product/comment/(?P<product_id>\d+)/$', views.comment_product, name='comment_product'),
 	# page full text for topic
 	url(r'^account/$', views.account, name='account'),
 	# page full text for topic

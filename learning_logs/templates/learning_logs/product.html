@@ -346,6 +346,19 @@
 									<div id="info1">
 										{{ product.text|linebreaks }}
 									</div>
+									 	<h4> Коментарии </h4>
+										{% for comment in comments %}
+										<a href = "/account/{{ comment.commenter.id}}"> 
+											<p> {{ comment.commenter.username }} </p>
+										</a>
+											<p>{{ comment.text }}</p>
+										{% empty %}
+											<p> Данный товар ни кем не прокомментирован </p>
+										{% endfor %}
+
+										<a href = "{% url 'learning_logs:comment_product' product.id %}">
+											Добавить комментарий
+										</a>
 									<div id="info2">
 										<p>The full review of the 2016 Nissan Maxima is coming soon. In the meantime, you can see pictures, research prices or view and
 											compare specs for the 2016 Nissan Maxima. If you‚considering the 2014 Nissan Maxima, you can read our review.</p>
