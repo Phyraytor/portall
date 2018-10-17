@@ -15,6 +15,9 @@ class Entry(models.Model):
 	"""Information, reading user this topic"""
 	topic = models.ForeignKey(Topic)
 	text = models.TextField()
+	price = models.BigIntegerField()
+	file = models.ImageField(upload_to="product")
+	name = models.CharField(max_length=200)
 	data_added = models.DateTimeField(auto_now_add=True)
 	owner = models.ForeignKey(User)
 	class Meta:
@@ -26,4 +29,9 @@ class Entry(models.Model):
 		else: 
 			return self.text[:50] + "..."
 
-		
+'''class message(models.Model):
+	text = models.TextField()
+	sender = models.ForeignKey(User)
+	addressee = models.ForeignKey(User)
+	title = models.CharField(max_length=200)
+	data_added = models.DateTimeField(auto_now_add=True)'''

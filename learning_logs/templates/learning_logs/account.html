@@ -5,7 +5,7 @@
 {% block content %}
 <h4> Личный кабинет {{ user.username }} </h1>
 <p>
-  <a href="{% url 'learning_logs:new_entry' topic.id %}">Добавить товар</a>
+  <a href="{% url 'learning_logs:new_entry' %}">Добавить товар</a>
 </p>
 {% for entry in entries %}
     <div class="panel panel-default">
@@ -19,11 +19,11 @@
         </h3>
       </div>
       <div class="panel-body">
-        <img src="/static/img/{{ entry.img }}" alt='Модель' style = "max-width: 100%;" />
+        <img src="{{ entry.file.url }}" alt='Модель' style = "max-width: 100%;" />
       </div>
 
        <div class="panel-body">
-        цена{{ entry.price }} руб.
+        цена {{ entry.price }} руб.
       </div>
       <div class="panel-body">
         {{ entry.text|linebreaks }}

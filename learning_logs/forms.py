@@ -7,9 +7,16 @@ class TopicForm(forms.ModelForm):
 		fields = ['text']
 		labels = {'text': ''}
 
+
 class EntryForm(forms.ModelForm):
+	#file = forms.ImageField()
 	class Meta:
 		model = Entry
-		fields = ['text']
+		fields = ['name', 'price', 'text', 'file']
 		labels = {'text': ''}
-		widgets = {'text': forms.Textarea( attrs={'cols': 80} ) }
+		
+		widgets = {
+			'name': forms.TextInput(),
+			'price': forms.NumberInput(),
+			'text': forms.Textarea( attrs={'cols': 80} ), 
+		}

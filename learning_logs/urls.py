@@ -9,12 +9,19 @@ urlpatterns = [
 
 	#show all topic
 	url(r'^topics/$', views.topics, name='topics'),
-	#page full text for topic
+	#page topics
 	url(r'^topics/(?P<topic_id>\d+)/$', views.topic, name='topic'),
+	#page product
+	url(r'^product/(?P<product_id>\d+)/$', views.product, name='product'),
+	#page full text for topic
+	url(r'^account/$', views.account, name='account'),
+	#page full text for topic
+	url(r'^account/(?P<account_id>\d+)/$', views.accounts, name='accounts'),
+
 	#Page for new Topic
 	url(r'^new_topic/$', views.new_topic, name='new_topic'),
 	#Page for new Entry
-	url(r'^new_entry/(?P<topic_id>\d+)/$', views.new_entry, 
+	url(r'^new_entry/$', views.new_entry, 
 		name='new_entry'),
 	#Page for edit Entry
 	url(r'^edit_entry/(?P<entry_id>\d+)/$', views.edit_entry, 
