@@ -22,4 +22,39 @@
 {% empty %}
     Сообщений нет
 {% endfor %}
+
+            {% if messages.paginator.num_pages > 1 %}
+              <div class="b-items__pagination wow zoomInUp" data-wow-delay="0.5s">
+                <div class="b-items__pagination-main">
+                  {% if messages.has_previous %}
+                    <a href="{% url 'learning_logs:messages' %}?page={{messages.previous_page_number}}" class="m-left">
+                      <span class="fa fa-angle-left"></span>
+                    </a>
+                  {% endif %}
+                  
+                  {% for page in messages.paginator.page_range %}
+                  
+                    {% if messages.number == page %}
+                      <span class="m-active"> 
+                        {{ page }} 
+                      </span>
+                    {% else %}
+                      <span>
+                        <a href="{% url 'learning_logs:messages' %}?page={{page}}"> 
+                          {{ page }} 
+                        </a>
+                      </span>
+                    {% endif %}
+                    
+                  {% endfor %}
+                  
+                  {% if messages.has_next %}
+                    <a href="{% url 'learning_logs:messages' %}?page={{messages.next_page_number}}" class="m-right">
+                      <span class="fa fa-angle-right"></span>
+                    </a> 
+                  {% endif %}  
+                </div>
+              </div>
+            {% endif %}
+
 {% endblock content %}

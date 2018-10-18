@@ -1,14 +1,16 @@
-
 from django.shortcuts import render, render_to_response
 
 from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 
 from .models import Topic, Entry, User, Message, CommentProduct
 from .forms import TopicForm, EntryForm, MessageForm, CommentProductForm
 
-
+#consts
+COUNT_PRODUCTS_PAGE = 5
+COUNT_MESSAGE_PAGE = 5
 # Create your views here.
 
 def index(request):
@@ -21,6 +23,7 @@ def account(request):
 	"""show list topic"""
 	topic = Topic.objects.first()
 	entries = Entry.objects.filter(owner=request.user) 
+	entries = this_page(request, entries, COUNT_PRODUCTS_PAGE)
 	context = {'topics': topic, 'entries': entries}
 	return render(request, 'learning_logs/account.html', context)
 
@@ -32,12 +35,14 @@ def accounts(request, account_id):
 	topic = Topic.objects.first()	
 	the_user = User.objects.get(id=account_id)
 	entries = Entry.objects.filter(owner=the_user) 
+	entries = this_page(request, entries, COUNT_PRODUCTS_PAGE)
 	context = {'topics': topic, 'entries': entries, 'the_user': the_user}
 	return render(request, 'learning_logs/accounts.html', context)
 
 def messages(request):
 	"""show list messages"""
 	my_messages = Message.objects.filter(address_id=request.user.id)
+	my_messages = this_page(request, my_messages, COUNT_MESSAGE_PAGE)
 	context = {'messages': my_messages}
 	return render(request, 'learning_logs/messages.html', context) 
 
@@ -50,10 +55,8 @@ def topics(request):
 def topic(request, topic_id):
 	"""show this topic and his text"""
 	topic = Topic.objects.get(id=topic_id)
-	#Проверка того, что тема принадлежит текущему пользователю. 
-	#if topic.owner != request.user:
-		#raise Http4
 	products = topic.entry_set.all() #order_by('-date_added')
+	products = this_page(request, products, COUNT_PRODUCTS_PAGE)
 	context = {'topic': topic, 'products': products}
 	return render(request, 'learning_logs/topic.html', context)
 
@@ -61,9 +64,12 @@ def product(request, product_id):
 	"""show this product and his text"""
 	obj_product = Entry.objects.get(id=product_id)
 	comments = CommentProduct.objects.filter(product=obj_product)
+	comments = this_page(request, comments, COUNT_MESSAGE_PAGE)
 	context = {'product': obj_product, 'comments': comments}
 	return render(request, 'learning_logs/product.html', context)
 
+
+''' *********************************functions form *************************************'''
 @login_required
 def send_message(request, address_id):
 	""" Отправляет сообщение пользователю """
@@ -154,3 +160,18 @@ def edit_entry(request, entry_id):
 			return HttpResponseRedirect( reverse('learning_logs:account') )
 	context = {'entry': entry, 'topic': topic, 'form': form}
 	return render(request, 'learning_logs/edit_entry.html', context)	
+
+''' ************************************closes funcions *************************'''
+
+def this_page(request, items, count):
+	#paginator
+	if "page" in request.GET:
+		page_num = request.GET['page']
+	else:
+		page_num = 1
+	pag = Paginator(items, count)
+	try:
+		result = pag.page(page_num)
+	except:
+		result = pag.page(1)
+	return result

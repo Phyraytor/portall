@@ -355,10 +355,43 @@
 										{% empty %}
 											<p> Данный товар ни кем не прокомментирован </p>
 										{% endfor %}
-
 										<a href = "{% url 'learning_logs:comment_product' product.id %}">
 											Добавить комментарий
 										</a>
+										{% if comments.paginator.num_pages > 1 %}
+							              <div class="b-items__pagination wow zoomInUp" data-wow-delay="0.5s">
+							                <div class="b-items__pagination-main">
+							                  {% if comments.has_previous %}
+							                    <a href="{% url 'learning_logs:product' product.id %}?page={{comments.previous_page_number}}" class="m-left">
+							                      <span class="fa fa-angle-left"></span>
+							                    </a>
+							                  {% endif %}
+							                  
+							                  {% for page in comments.paginator.page_range %}
+							                  
+							                    {% if comments.number == page %}
+							                      <span class="m-active"> 
+							                        {{ page }} 
+							                      </span>
+							                    {% else %}
+							                      <span>
+							                        <a href="{% url 'learning_logs:product'  product.id %}?page={{page}}"> 
+							                          {{ page }} 
+							                        </a>
+							                      </span>
+							                    {% endif %}
+							                    
+							                  {% endfor %}
+							                  
+							                  {% if comments.has_next %}
+							                    <a href="{% url 'learning_logs:product' product.id %}?page={{comments.next_page_number}}" class="m-right">
+							                      <span class="fa fa-angle-right"></span>
+							                    </a> 
+							                  {% endif %}  
+							                </div>
+							              </div>
+							            {% endif %}
+										
 									<div id="info2">
 										<p>The full review of the 2016 Nissan Maxima is coming soon. In the meantime, you can see pictures, research prices or view and
 											compare specs for the 2016 Nissan Maxima. If you‚considering the 2014 Nissan Maxima, you can read our review.</p>

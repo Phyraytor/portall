@@ -216,55 +216,77 @@
 				<div class="row">
 					<div class="col-lg-9 col-sm-8 col-xs-12">
 						<div class="b-items__cars">
-
-							{% for  product in products%}
-							<div class="b-items__cars-one wow zoomInUp" data-wow-delay="0.5s">
-								<div class="b-items__cars-one-img">
-									<img src="{{ product.file.url }}" alt='Модель' style = "max-width: 100%;" />
-									<a data-toggle="modal" data-target="#myModal" href="#" class="b-items__cars-one-img-video">
-										<span class="fa fa-film"></span></a>
-									<span class="b-items__cars-one-img-type m-premium">PREMIUM</span>
-									<form action="http://html.templines.com/" method="post">
-										<input type="checkbox" name="check1" id='check1'/>
-										<label for="check1" class="b-items__cars-one-img-check"><span class="fa fa-check"></span></label>
-									</form>
-								</div>
-
-								<div class="b-items__cars-one-info">
-									<header class="b-items__cars-one-info-header s-lineDownLeft">
-										<h2>{{ product.name }}</h2>
-										<span>{{ product.price }} руб.</span>
-									</header> 
-									<p>
-										 {{ product.text|linebreaks }}
-									</p>
-									<div class="b-items__cars-one-info-km">
-										<span class="fa fa-tachometer"></span> 31,730 KM
-									</div>
-									<div class="b-items__cars-one-info-details">
-										<div class="b-featured__item-links">
-											<a href="#">Registered 2015</a>
-											<a href="#">{{ product.owner.username }}</a>
-											<a href="#">8-Speed Automatic</a>
-											<a href="#">{{ product.file.url }}</a>
-										</div>
-										<a href="{% url 'learning_logs:product' product.id %}" class="btn m-btn">Подробнее<span class="fa fa-angle-right"></span></a>
-									</div>
-								</div>
-							</div>
-							{% endfor %}
 							
+								{% for  product in products %}
+								<div class="b-items__cars-one wow zoomInUp" data-wow-delay="0.5s">
+									<div class="b-items__cars-one-img">
+										<img src="{{ product.file.url }}" alt='Модель' style = "max-width: 100%;" />
+										<a data-toggle="modal" data-target="#myModal" href="#" class="b-items__cars-one-img-video">
+											<span class="fa fa-film"></span></a>
+										<span class="b-items__cars-one-img-type m-premium">PREMIUM</span>
+										<form action="http://html.templines.com/" method="post">
+											<input type="checkbox" name="check1" id='check1'/>
+											<label for="check1" class="b-items__cars-one-img-check"><span class="fa fa-check"></span></label>
+										</form>
+									</div>
+
+									<div class="b-items__cars-one-info">
+										<header class="b-items__cars-one-info-header s-lineDownLeft">
+											<h2>{{ product.name }}</h2>
+											<span>{{ product.price }} руб.</span>
+										</header> 
+										<p>
+											 {{ product.text|linebreaks }}
+										</p>
+										<div class="b-items__cars-one-info-km">
+											<span class="fa fa-tachometer"></span> 31,730 KM
+										</div>
+										<div class="b-items__cars-one-info-details">
+											<div class="b-featured__item-links">
+												<a href="#">Registered 2015</a>
+												<a href="#">{{ product.owner.username }}</a>
+												<a href="#">8-Speed Automatic</a>
+												<a href="#">{{ product.file.url }}</a>
+											</div>
+											<a href="{% url 'learning_logs:product' product.id %}" class="btn m-btn">Подробнее<span class="fa fa-angle-right"></span></a>
+										</div>
+									</div>
+								</div>
+								{% endfor %}
 						</div>
-						<div class="b-items__pagination wow zoomInUp" data-wow-delay="0.5s">
-							<div class="b-items__pagination-main">
-								<a data-toggle="modal" data-target="#myModal" href="#" class="m-left"><span class="fa fa-angle-left"></span></a>
-								<span class="m-active"><a href="#">1</a></span>
-								<span><a href="#">2</a></span>
-								<span><a href="#">3</a></span>
-								<span><a href="#">4</a></span>
-								<a href="#" class="m-right"><span class="fa fa-angle-right"></span></a>    
+						{% if products.paginator.num_pages > 1 %}
+							<div class="b-items__pagination wow zoomInUp" data-wow-delay="0.5s">
+								<div class="b-items__pagination-main">
+									{% if products.has_previous %}
+										<a href="{% url 'learning_logs:topic' topic.id %}?page={{products.previous_page_number}}" class="m-left">
+											<span class="fa fa-angle-left"></span>
+										</a>
+									{% endif %}
+									
+									{% for page in products.paginator.page_range %}
+									
+										{% if products.number == page %}
+											<span class="m-active"> 
+												{{ page }} 
+											</span>
+										{% else %}
+											<span>
+												<a href="{% url 'learning_logs:topic' topic.id %}?page={{page}}"> 
+													{{ page }} 
+												</a>
+											</span>
+										{% endif %}
+										
+									{% endfor %}
+									
+									{% if products.has_next %}
+										<a href="{% url 'learning_logs:topic' topic.id %}?page={{products.next_page_number}}" class="m-right">
+											<span class="fa fa-angle-right"></span>
+										</a> 
+									{% endif %}  
+								</div>
 							</div>
-						</div>
+						{% endif %}
 					</div>
 					<div class="col-lg-3 col-sm-4 col-xs-12">
 						<aside class="b-items__aside">
