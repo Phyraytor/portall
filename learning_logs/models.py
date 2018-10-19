@@ -11,6 +11,13 @@ class Topic(models.Model):
 	def __str__(self):
 		return self.text
 
+class StatsProduct(models.Model):
+	brand = models.CharField(max_length=50)
+	type_model = models.CharField(max_length=50)
+	type_engine = models.CharField(max_length=50)
+	type_drive = models.CharField(max_length=50)
+	year_create = models.BigIntegerField()
+	
 class Entry(models.Model):
 	"""Information, reading user this topic"""
 	topic = models.ForeignKey(Topic)
@@ -20,6 +27,7 @@ class Entry(models.Model):
 	name = models.CharField(max_length=200)
 	data_added = models.DateTimeField(auto_now_add=True)
 	owner = models.ForeignKey(User)
+	stats = models.ForeignKey(StatsProduct)
 	class Meta:
 		verbose_name_plural = 'entries'
 
@@ -40,3 +48,10 @@ class CommentProduct(models.Model):
 	text = models.TextField()
 	commenter = models.ForeignKey(User)
 	product = models.ForeignKey(Entry)
+
+
+
+class StatsProductList(models.Model):
+	key = models.CharField(max_length=50)
+	value = models.CharField(max_length=50)
+	

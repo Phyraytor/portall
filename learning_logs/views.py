@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 
-from .models import Topic, Entry, User, Message, CommentProduct
+from .models import Topic, Entry, User, Message, CommentProduct, StatsProductList
 from .forms import TopicForm, EntryForm, MessageForm, CommentProductForm
 
 #consts
@@ -56,8 +56,10 @@ def topic(request, topic_id):
 	"""show this topic and his text"""
 	topic = Topic.objects.get(id=topic_id)
 	products = topic.entry_set.all() #order_by('-date_added')
+	products = filter_products(request, products)
 	products = this_page(request, products, COUNT_PRODUCTS_PAGE)
-	context = {'topic': topic, 'products': products}
+	filters = create_filters_list()
+	context = {'topic': topic, 'products': products, 'filters': filters, "GET": request.GET}
 	return render(request, 'learning_logs/topic.html', context)
 
 def product(request, product_id):
@@ -164,7 +166,7 @@ def edit_entry(request, entry_id):
 ''' ************************************closes funcions *************************'''
 
 def this_page(request, items, count):
-	#paginator
+	""" paginator """
 	if "page" in request.GET:
 		page_num = request.GET['page']
 	else:
@@ -175,3 +177,38 @@ def this_page(request, items, count):
 	except:
 		result = pag.page(1)
 	return result
+
+def create_filters_list():
+	""" Полный список фильтров отсортированный по ключам """
+	filters = StatsProductList.objects.all()
+	result = {}
+	for key_filter in filters:
+		if key_filter.key in result:
+			result[key_filter.key].append(key_filter.value)
+		else:
+			result[key_filter.key] = [key_filter.value]
+	return result
+
+
+def filter_products(request, products):
+	""" Фильтры товаров """
+	list_filter = clear_bad_get(request)
+	result = []
+	for product in products:
+		if check_filter(list_filter, product):
+			result.append(product)
+	return result
+
+def clear_bad_get(request):
+	""" Исключить не нужные get данные """
+	list_filter = {}
+	for key in request.GET:
+		if request.GET[key] != '' and  request.GET[key] != 'page':
+			list_filter[key] = request.GET[key]
+	return list_filter
+
+def check_filter(list_filter, product):
+	for key_get in list_filter:
+		if getattr(product.stats, key_get.lower() ) != list_filter[key_get]:
+			return False
+	return True
